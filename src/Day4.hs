@@ -1,27 +1,34 @@
+{-# LANGUAGE RecordWildCards #-}
+
 module Day4 (day4) where
 
-import Control.Arrow ((***))
-import Control.Monad (join)
+import Data.Char (isDigit)
+import Text.ParserCombinators.ReadP (ReadP, char, eof, munch1, readP_to_S)
 
-mapTuple :: (a -> b) -> (a, a) -> (b, b)
-mapTuple = join (***)
+data RangePair = RangePair
+  { l0 :: Int,
+    r0 :: Int,
+    l1 :: Int,
+    r1 :: Int
+  }
 
-contains :: ((Int, Int), (Int, Int)) -> Bool
-contains = (||) <$> uncurry contains' <*> uncurry (flip contains')
+contains :: RangePair -> Bool
+contains RangePair {..} = (l0 <= l1 && r1 <= r0) || (l1 <= l0 && r0 <= r1)
+
+overlaps :: RangePair -> Bool
+overlaps RangePair {..} = not (r0 < l1 || r1 < l0)
+
+parse :: String -> RangePair
+parse = fst . head . readP_to_S pRangePair
   where
-    contains' (a, b) (c, d) = a <= c && d <= b
+    pRangePair :: ReadP RangePair
+    pRangePair = RangePair <$> (pInt <* char '-') <*> (pInt <* char ',') <*> (pInt <* char '-') <*> (pInt <* eof)
 
-overlaps :: ((Int, Int), (Int, Int)) -> Bool
-overlaps ((a, b), (c, d)) = not (b < c || d < a)
-
-parse :: String -> ((Int, Int), (Int, Int))
-parse = mapTuple (mapTuple read . splitOn (== '-')) . splitOn (== ',')
-  where
-    splitOn c s = case break c s of
-      (a, b) -> (a, tail b)
+    pInt :: ReadP Int
+    pInt = read <$> munch1 isDigit
 
 day4 :: IO ()
 day4 = do
   input <- lines <$> readFile "puzzle-input/day4"
-  print $ "part 1: " <> show (sum . (const 1 <$>) . filter contains . (parse <$>) $ input)
-  print $ "part 2: " <> show (sum . (const 1 <$>) . filter overlaps . (parse <$>) $ input)
+  print $ "part 1: " <> show (length . filter contains . (parse <$>) $ input)
+  print $ "part 2: " <> show (length . filter overlaps . (parse <$>) $ input)
