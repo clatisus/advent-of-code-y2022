@@ -5,9 +5,10 @@ import Day2 (day2)
 import Day3 (day3)
 import Day4 (day4)
 import Day5 (day5)
+import Day6 (day6)
 
 days :: [IO ()]
-days = [day1, day2, day3, day4, day5]
+days = [day1, day2, day3, day4, day5, day6]
 
 main :: IO ()
 main = do

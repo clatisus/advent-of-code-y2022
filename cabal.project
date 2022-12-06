@@ -1,0 +1,9 @@
+packages: .
+
+with-compiler: ghc-9.2.4
+
+documentation:            True
+haddock-hyperlink-source: True
+
+package *
+ documentation: True
