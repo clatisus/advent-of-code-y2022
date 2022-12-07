@@ -41,14 +41,14 @@ pGoUp = GoUp <$ string "$ cd .." <* pEndOfLine
 pGoDown :: ReadP Command
 pGoDown = GoDown <$> (string "$ cd " *> pName) <* pEndOfLine
 
-pDir :: ReadP FSItem
-pDir = Folder <$> (string "dir " *> pName) <*> pure [] <* pEndOfLine
-
-pFile :: ReadP FSItem
-pFile = File <$> pSize <*> (char ' ' *> pName) <* pEndOfLine
-
 pList :: ReadP Command
 pList = List <$ string "$ ls" <* pEndOfLine <*> many (pDir <++ pFile)
+  where
+    pDir :: ReadP FSItem
+    pDir = Folder <$> (string "dir " *> pName) <*> pure [] <* pEndOfLine
+
+    pFile :: ReadP FSItem
+    pFile = File <$> pSize <*> (char ' ' *> pName) <* pEndOfLine
 
 parse :: String -> [Command]
 parse = fst . head . filter (null . snd) . readP_to_S pCommands
