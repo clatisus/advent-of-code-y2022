@@ -1,3 +1,5 @@
+{-# LANGUAGE ViewPatterns #-}
+
 module Day7 (day7) where
 
 import Control.Arrow ((***))
@@ -99,9 +101,7 @@ part2' (Folder _ items) = (b : a, b)
     (a, b) = foldr ((\(a, b) -> (++ a) *** (+ b)) . part2') ([], 0) items
 
 part2 :: FSItem -> Int
-part2 fs = head . filter ((>= 30000000) . (70000000 -) . (rt -)) . sort $ a
-  where
-    (rt : a, _) = part2' fs
+part2 (part2' -> (a, _)) = head . filter ((>= 30000000) . (70000000 -) . (head a -)) . sort $ a
 
 day7 :: IO ()
 day7 = do
