@@ -7,7 +7,15 @@ maintainer:         clatisus@gmail.com
 
 executable advent-of-code-y2022
   main-is:          Main.hs
-  other-modules:    Day1, Day2, Day3, Day4, Day5, Day6, Day7
+  other-modules:
+    Day1,
+    Day2,
+    Day3,
+    Day4,
+    Day5,
+    Day6,
+    Day7,
+    Day8
   build-depends:    base, split, containers, lens
   hs-source-dirs:   app, src
   default-language: Haskell2010
