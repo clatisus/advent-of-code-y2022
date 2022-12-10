@@ -16,7 +16,8 @@ executable advent-of-code-y2022
     Day6,
     Day7,
     Day8,
-    Day9
-  build-depends:    base, split, containers, lens
+    Day9,
+    Day10
+  build-depends:    base, split, containers, lens, parsec
   hs-source-dirs:   app, src
   default-language: Haskell2010
