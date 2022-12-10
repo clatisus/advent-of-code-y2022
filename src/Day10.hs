@@ -2,7 +2,7 @@ module Day10 (day10) where
 
 import Control.Applicative (Alternative ((<|>)))
 import Control.Monad (void)
-import Data.List (intercalate, scanl')
+import Data.List (scanl')
 import Data.List.Split (chunksOf)
 import qualified Text.Parsec as P
 
@@ -41,10 +41,10 @@ part1 = sum . zipEvery40 20 . drop 19 . run
     zipEvery40 v (x : xs) = v * x : zipEvery40 (v + 40) (drop 39 xs)
 
 part2 :: [Instruction] -> String
-part2 = intercalate "\n" . chunksOf 40 . (draw <$>) . zip (cycle [0 .. 39]) . run
+part2 = unlines . (zipWith draw [0 ..] <$>) . chunksOf 40 . run
   where
-    draw :: (Int, Int) -> Char
-    draw (crt, sprite)
+    draw :: Int -> Int -> Char
+    draw crt sprite
       | abs (crt - sprite) <= 1 = '#'
       | otherwise = '.'
 

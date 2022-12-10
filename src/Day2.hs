@@ -24,5 +24,5 @@ score x y = outcome x y + y + 1
 day2 :: IO ()
 day2 = do
   input <- map (mapTuple encode . ((,) <$> head <*> last)) . lines <$> readFile "puzzle-input/day2"
-  print $ "part1: " <> show (sum . map (uncurry score) $ input)
-  print $ "part2: " <> show (sum . map (\(x, y) -> score x (force x y)) $ input)
+  putStrLn $ "part 1: " <> show (sum . map (uncurry score) $ input)
+  putStrLn $ "part 2: " <> show (sum . map (\(x, y) -> score x (force x y)) $ input)

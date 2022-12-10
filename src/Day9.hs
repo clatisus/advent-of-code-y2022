@@ -66,5 +66,5 @@ part2 = size . fst . foldl' move (singleton (0, 0), Rope $ replicate 10 (0, 0))
 day9 :: IO ()
 day9 = do
   input <- pMovements <$> readFile "puzzle-input/day9"
-  print $ "part 1: " <> show (part1 input)
-  print $ "part 2: " <> show (part2 input)
+  putStrLn $ "part 1: " <> show (part1 input)
+  putStrLn $ "part 2: " <> show (part2 input)

@@ -13,5 +13,5 @@ findFirstDistinctBy xs n =
 day6 :: IO ()
 day6 = do
   input <- readFile "puzzle-input/day6"
-  print $ "part 1: " <> show (findFirstDistinctBy input 4)
-  print $ "part 2: " <> show (findFirstDistinctBy input 14)
+  putStrLn $ "part 1: " <> show (findFirstDistinctBy input 4)
+  putStrLn $ "part 2: " <> show (findFirstDistinctBy input 14)

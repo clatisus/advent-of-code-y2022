@@ -48,5 +48,5 @@ day8 = do
   let n = length input
   let m = length $ head input
   let inputWithIndex = zipWith zip (chunksOf m [1 .. n * m]) input
-  print $ show (part1 inputWithIndex)
-  print $ show (part2 input n m)
+  putStrLn $ "part 1: " <> show (part1 inputWithIndex)
+  putStrLn $ "part 2: " <> show (part2 input n m)

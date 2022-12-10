@@ -107,5 +107,5 @@ day7 :: IO ()
 day7 = do
   commands <- parse <$> readFile "puzzle-input/day7"
   let fs = fst . fsRoot $ foldl' exec (Folder "/" [], []) commands
-  print $ "part 1: " <> (show . part1) fs
-  print $ "part 2: " <> (show . part2) fs
+  putStrLn $ "part 1: " <> (show . part1) fs
+  putStrLn $ "part 2: " <> (show . part2) fs

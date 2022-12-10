@@ -54,5 +54,5 @@ day5 :: IO ()
 day5 = do
   input <- lines <$> readFile "puzzle-input/day5"
   let (stacks, moves) = (parseStacks *** ((parseMove <$>) . tail)) $ break (== "") input
-  print $ "part 1: " <> ((\(Stack s) -> head s) <$> performMovesWith stacks moves reverse)
-  print $ "part 2: " <> ((\(Stack s) -> head s) <$> performMovesWith stacks moves id)
+  putStrLn $ "part 1: " <> ((\(Stack s) -> head s) <$> performMovesWith stacks moves reverse)
+  putStrLn $ "part 2: " <> ((\(Stack s) -> head s) <$> performMovesWith stacks moves id)

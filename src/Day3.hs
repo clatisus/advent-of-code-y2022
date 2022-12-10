@@ -31,5 +31,5 @@ eachThree (x : y : z : xs) = (x, y, z) : eachThree xs
 day3 :: IO ()
 day3 = do
   input <- lines <$> readFile "puzzle-input/day3"
-  print $ "part 1: " <> show (sum $ map (getPriority . findDup . splitHalf) input)
-  print $ "part 2: " <> show (sum $ map (getPriority . findDup3) $ eachThree input)
+  putStrLn $ "part 1: " <> show (sum $ map (getPriority . findDup . splitHalf) input)
+  putStrLn $ "part 2: " <> show (sum $ map (getPriority . findDup3) $ eachThree input)

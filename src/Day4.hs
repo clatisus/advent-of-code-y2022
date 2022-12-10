@@ -30,5 +30,5 @@ parse = fst . head . readP_to_S pRangePair
 day4 :: IO ()
 day4 = do
   input <- lines <$> readFile "puzzle-input/day4"
-  print $ "part 1: " <> show (length . filter contains . (parse <$>) $ input)
-  print $ "part 2: " <> show (length . filter overlaps . (parse <$>) $ input)
+  putStrLn $ "part 1: " <> show (length . filter contains . (parse <$>) $ input)
+  putStrLn $ "part 2: " <> show (length . filter overlaps . (parse <$>) $ input)
