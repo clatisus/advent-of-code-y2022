@@ -4,6 +4,7 @@ import Day1 (day1)
 import Day10 (day10)
 import Day11 (day11)
 import Day12 (day12)
+import Day13 (day13)
 import Day2 (day2)
 import Day3 (day3)
 import Day4 (day4)
@@ -26,7 +27,8 @@ days =
     day9,
     day10,
     day11,
-    day12
+    day12,
+    day13
   ]
 
 main :: IO ()
