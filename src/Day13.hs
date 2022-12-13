@@ -1,49 +1,45 @@
+{-# LANGUAGE InstanceSigs #-}
+
 module Day13 (day13) where
 
-import Data.List (elemIndex, sortBy)
+import Data.List (elemIndex, sort)
 import Data.Maybe (fromJust)
 import qualified Text.Parsec as P
 
-data PacketData = Single Int | List [PacketData] deriving (Show, Eq)
+data Packet = S Int | L [Packet] deriving (Show, Eq)
 
-comparePacketData :: PacketData -> PacketData -> Ordering
-comparePacketData (Single a) (Single b) = compare a b
-comparePacketData a@(Single _) b@(List _) = comparePacketData (List [a]) b
-comparePacketData a@(List _) b@(Single _) = comparePacketData a (List [b])
-comparePacketData (List []) (List []) = EQ
-comparePacketData (List []) (List _) = LT
-comparePacketData (List _) (List []) = GT
-comparePacketData (List (a : as)) (List (b : bs)) = case comparePacketData a b of
-  EQ -> comparePacketData (List as) (List bs)
-  x -> x
+instance Ord Packet where
+  compare :: Packet -> Packet -> Ordering
+  compare (S a) (S b) = compare a b
+  compare a@(S _) b@(L _) = compare (L [a]) b
+  compare a@(L _) b@(S _) = compare a (L [b])
+  compare (L []) (L []) = EQ
+  compare (L []) (L _) = LT
+  compare (L _) (L []) = GT
+  compare (L (a : as)) (L (b : bs)) = compare a b <> compare (L as) (L bs)
 
-parseInput :: P.SourceName -> String -> Either P.ParseError [(PacketData, PacketData)]
+parseInput :: P.SourceName -> String -> Either P.ParseError [(Packet, Packet)]
 parseInput =
   P.parse $
-    P.sepBy1
-      ((,) <$> (parsePacketData <* P.newline) <*> (parsePacketData <* P.newline))
-      P.newline
+    ((,) <$> (parse <* P.newline) <*> (parse <* P.newline))
+      `P.sepBy1` P.newline
       <* P.eof
   where
-    parseList :: P.Parsec String () PacketData
-    parseList = List <$> P.between (P.char '[') (P.char ']') (P.sepBy parsePacketData (P.char ','))
+    parse :: P.Parsec String () Packet
+    parse =
+      S . read <$> P.many1 P.digit
+        P.<|> L <$> P.between (P.char '[') (P.char ']') (parse `P.sepBy` P.char ',')
 
-    parseSingle :: P.Parsec String () PacketData
-    parseSingle = Single . read <$> P.many1 P.digit
+part1 :: [(Packet, Packet)] -> Int
+part1 = sum . (fst <$>) . filter ((/= GT) . snd) . zip [1 ..] . (uncurry compare <$>)
 
-    parsePacketData :: P.Parsec String () PacketData
-    parsePacketData = parseList P.<|> parseSingle
-
-part1 :: [(PacketData, PacketData)] -> Int
-part1 = sum . (fst <$>) . filter ((/= GT) . snd) . zip [1 ..] . (uncurry comparePacketData <$>)
-
-part2 :: [(PacketData, PacketData)] -> Int
-part2 = decode . sortBy comparePacketData . (dividers ++) . concatMap (\(a, b) -> [a, b])
+part2 :: [(Packet, Packet)] -> Int
+part2 = decode . sort . (dividers ++) . concatMap (\(a, b) -> [a, b])
   where
-    dividers :: [PacketData]
-    dividers = [List [List [Single 2]], List [List [Single 6]]]
+    dividers :: [Packet]
+    dividers = [L [L [S 2]], L [L [S 6]]]
 
-    decode :: [PacketData] -> Int
+    decode :: [Packet] -> Int
     decode xs = product $ (+ 1) . fromJust . flip elemIndex xs <$> dividers
 
 day13 :: IO ()
