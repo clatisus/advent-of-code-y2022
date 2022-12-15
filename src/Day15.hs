@@ -1,3 +1,4 @@
+{-# LANGUAGE NumericUnderscores #-}
 {-# LANGUAGE TupleSections #-}
 
 module Day15 (day15) where
@@ -31,7 +32,7 @@ parseSensors = P.parse $ parseSensor `P.endBy` P.newline <* P.eof
       return ((x, y), (x', y'))
 
 merge :: [(Int, Int)] -> [(Int, Int)]
-merge = foldl' f [] . sort
+merge = reverse . foldl' f [] . sort
   where
     f [] x = [x]
     f (b@(x', y') : bs) a@(x, y)
@@ -39,11 +40,11 @@ merge = foldl' f [] . sort
       | otherwise = a : b : bs
 
 findImpossibleX :: Int -> [SensorAndBeacon] -> [(Int, Int)]
-findImpossibleX targetY = merge . filter (uncurry (<=)) . (findImpossibleX <$>)
+findImpossibleX targetY = merge . filter (uncurry (<=)) . (findImpossibleX' <$>)
   where
     -- \| targetX - x | + | targetY - y | <= dis
-    findImpossibleX :: SensorAndBeacon -> (Int, Int)
-    findImpossibleX ((x, y), beacon)
+    findImpossibleX' :: SensorAndBeacon -> (Int, Int)
+    findImpossibleX' ((x, y), beacon)
       | d < 0 = (0, -1)
       | otherwise = (x - d, x + d)
       where
@@ -57,7 +58,7 @@ part1 sab =
     . findImpossibleX targetY
     $ sab
   where
-    targetY = 2000000
+    targetY = 2_000_000
     beaconAtTargetY = length . nub . filter ((== targetY) . snd) . (snd <$>) $ sab
 
 part2 :: [SensorAndBeacon] -> Int
@@ -68,17 +69,16 @@ part2 sab =
     . ((`findPossible` sab) <$>)
     $ [0 .. maxCoord]
   where
-    maxCoord = 4000000
+    maxCoord = 4_000_000
 
     findPossible :: Int -> [SensorAndBeacon] -> Maybe (Int, Int)
-    findPossible targetY sab
-      | alreadyFull = Nothing
-      | otherwise =
-          (,targetY)
-            <$> find (\x -> none (\(l, r) -> l <= x && x <= r) impossibleX) [0 .. maxCoord]
-      where
-        impossibleX = findImpossibleX targetY sab
-        alreadyFull = any (\(x, y) -> x <= 0 && maxCoord <= y) impossibleX
+    findPossible targetY sab =
+      (,targetY) <$> case findImpossibleX targetY sab of
+        [] -> Just 0
+        ((x, y) : _)
+          | 0 < x -> Just 0
+          | y < maxCoord -> Just (y + 1)
+          | otherwise -> Nothing
 
 day15 :: IO ()
 day15 = do
