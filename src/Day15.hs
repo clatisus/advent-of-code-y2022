@@ -4,8 +4,8 @@
 module Day15 (day15) where
 
 import Control.Applicative ((<|>))
-import Control.Lens (none)
-import Data.Foldable (find, foldl')
+import Data.Foldable (foldl')
+import Data.Ix (Ix (rangeSize))
 import Data.List (nub, sort)
 import Data.Maybe (fromJust)
 import qualified Text.Parsec as P
@@ -40,23 +40,17 @@ merge = reverse . foldl' f [] . sort
       | otherwise = a : b : bs
 
 findImpossibleX :: Int -> [SensorAndBeacon] -> [(Int, Int)]
-findImpossibleX targetY = merge . filter (uncurry (<=)) . (findImpossibleX' <$>)
-  where
-    -- \| targetX - x | + | targetY - y | <= dis
-    findImpossibleX' :: SensorAndBeacon -> (Int, Int)
-    findImpossibleX' ((x, y), beacon)
-      | d < 0 = (0, -1)
-      | otherwise = (x - d, x + d)
-      where
-        d = dis (x, y) beacon - abs (targetY - y)
+findImpossibleX targetY sab =
+  merge $
+    [ (x - d, x + d)
+      | ((x, y), beacon) <- sab,
+        -- \| targetX - x | + | targetY - y | <= dis
+        let d = dis (x, y) beacon - abs (targetY - y),
+        d >= 0
+    ]
 
 part1 :: [SensorAndBeacon] -> Int
-part1 sab =
-  subtract beaconAtTargetY
-    . sum
-    . map (\(x, y) -> y - x + 1)
-    . findImpossibleX targetY
-    $ sab
+part1 sab = subtract beaconAtTargetY . sum . (rangeSize <$>) . findImpossibleX targetY $ sab
   where
     targetY = 2_000_000
     beaconAtTargetY = length . nub . filter ((== targetY) . snd) . (snd <$>) $ sab
